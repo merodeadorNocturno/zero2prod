@@ -10,7 +10,7 @@ pub struct FormData {
 }
 
 pub async fn subscribe(form: web::Form<FormData>, db_pool: web::Data<PgPool>) -> HttpResponse {
-    println!(":: POST SUBSCRIPTIONS ::");
+    log::info!("Saving new subscriber details in the DB");
 
     match sqlx::query!(
         r#"
@@ -25,9 +25,12 @@ pub async fn subscribe(form: web::Form<FormData>, db_pool: web::Data<PgPool>) ->
     .execute(db_pool.get_ref())
     .await
     {
-        Ok(_) => HttpResponse::Ok().finish(),
+        Ok(_) => {
+            log::info!("New subscriber details have been saved.");
+            HttpResponse::Ok().finish()
+        }
         Err(e) => {
-            println!("Failed to execute query: {}", e);
+            log::error!("Failed to execute query: {:?}", e);
             HttpResponse::InternalServerError().finish()
         }
     }

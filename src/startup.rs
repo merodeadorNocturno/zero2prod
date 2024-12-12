@@ -1,6 +1,7 @@
 use crate::routes::{health_check, subscribe};
 use actix_web::{
     dev::Server,
+    middleware::Logger,
     web::{get, post, Data},
     App, HttpServer,
 };
@@ -12,6 +13,7 @@ pub fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, std::io::Er
     let db_pool = Data::new(db_pool);
     let server = HttpServer::new(move || {
         App::new()
+            .wrap(Logger::default())
             .route("/health_check", get().to(health_check))
             .route("/subscriptions", post().to(subscribe))
             .app_data(db_pool.clone())
