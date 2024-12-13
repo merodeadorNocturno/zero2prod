@@ -1,4 +1,3 @@
-// use reqwest::Client;
 use sqlx::{Connection, PgConnection, PgPool};
 use std::net::TcpListener;
 use uuid::Uuid;
@@ -25,15 +24,11 @@ pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
         .expect("Failed to connect to Postgres");
 
     let create_db_query = format!(r#"Create database "{}";"#, config.database_name);
-    // let mut txn = connection
-    //     .begin()
-    //     .await
-    //     .expect("Falied to begin transaction");
+
     sqlx::query(&create_db_query)
         .execute(&mut connection)
         .await
         .expect("Failed to create database.");
-    // txn.commit().await.expect("Failed to commit transaction");
 
     let connection_pool = PgPool::connect(&config.connection_string())
         .await
@@ -58,11 +53,6 @@ async fn health_check_works() {
         .await
         .expect("Failed to execute request.");
 
-    println!(
-        ":::: >>>> {} in {}",
-        response.status().to_string(),
-        &app.address
-    );
     assert_eq!(Some(0), response.content_length());
     assert!(response.status().is_success());
 }
@@ -75,7 +65,7 @@ async fn spawn_app() -> TestApp {
 
     let address = format!("http://{}:{}", ip, port);
 
-    // Like mocking, but worse or better. I dunno
+    // Like mocking, but worse... or better. I dunno
     let mut configuration = get_configuration().expect("Failed to read configuration");
     configuration.database.database_name = Uuid::new_v4().to_string();
 
