@@ -34,7 +34,7 @@ impl DatabaseSettings {
             self.password.expose_secret(),
             self.host,
             self.port,
-            self.database_name
+            self.database_name,
         ))
     }
 }
