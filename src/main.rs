@@ -13,17 +13,6 @@ async fn main() -> Result<(), std::io::Error> {
     let subscriber = get_subscriber("zero2prod".into(), "info".into(), std::io::stdout);
     init_subscriber(subscriber);
 
-    // LogTracer::init().expect("Failed to set logger");
-    // let env_filter = EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("info"));
-    // let formatting_layer = BunyanFormattingLayer::new("zero2prod".into(), std::io::stdout);
-
-    // let subscriber = Registry::default()
-    //     .with(env_filter)
-    //     .with(JsonStorageLayer)
-    //     .with(formatting_layer);
-
-    // set_global_default(subscriber).expect("Failed to set subscriber");
-
     let configuration = get_configuration().expect("Failed to read configuration");
     let connection_pool =
         PgPool::connect(&configuration.database.connection_string().expose_secret())
